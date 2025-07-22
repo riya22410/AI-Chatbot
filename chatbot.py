@@ -16,22 +16,21 @@ class Chatbot:
         self.azure_deployment = azure_conf["DEPLOYMENT_NAME"]
 
     def ask(self, user_prompt: str):
-        self.messages.append({"role":"user","content":user_prompt})
+        self.messages.append({"role": "user", "content": user_prompt})
         if len(self.messages) == 1:
             cols = ", ".join(self.df.columns)
             sys_msg = (
                 f"You are a data assistant. The user has uploaded a CSV with columns: {cols}. "
                 "Answer precisely and when they request visuals or forecasts, generate code accordingly."
             )
-            self.messages.insert(0, {"role":"system","content":sys_msg})
+            self.messages.insert(0, {"role": "system", "content": sys_msg})
         resp = openai.ChatCompletion.create(
-            deployment_id=self.azure_deployment,  # use deployment_id for Azure
+            deployment_id=self.azure_deployment,  # ✅ Azure-specific parameter
             messages=self.messages,
             temperature=0.2,
         )
-
         answer = resp.choices[0].message.content.strip()
-        self.messages.append({"role":"assistant","content":answer})
+        self.messages.append({"role": "assistant", "content": answer})
         if "plot" in user_prompt.lower():
             plot_df(self.df, user_prompt)
         if "forecast" in user_prompt.lower():
@@ -45,12 +44,12 @@ class Chatbot:
             "the user might ask next. List them as bullet points without numbering."
         )
         messages = [
-            {"role":"system","content":"You are an expert in user engagement."},
+            {"role": "system", "content": "You are an expert in user engagement."},
             *self.messages,
-            {"role":"user","content":prompt}
+            {"role": "user", "content": prompt}
         ]
         resp = openai.ChatCompletion.create(
-            deployment_id=self.azure_deployment
+            deployment_id=self.azure_deployment,  # ✅ Fix here too
             messages=messages,
             temperature=0.7,
         )
