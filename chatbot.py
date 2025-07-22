@@ -25,10 +25,11 @@ class Chatbot:
             )
             self.messages.insert(0, {"role":"system","content":sys_msg})
         resp = openai.ChatCompletion.create(
-            engine=self.azure_deployment,
+            deployment_id=self.azure_deployment,  # use deployment_id for Azure
             messages=self.messages,
             temperature=0.2,
         )
+
         answer = resp.choices[0].message.content.strip()
         self.messages.append({"role":"assistant","content":answer})
         if "plot" in user_prompt.lower():
