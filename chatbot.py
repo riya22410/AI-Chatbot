@@ -50,7 +50,7 @@ class Chatbot:
             {"role":"user","content":prompt}
         ]
         resp = openai.ChatCompletion.create(
-            engine=self.azure_deployment,
+            deployment_id=self.azure_deployment
             messages=messages,
             temperature=0.7,
         )
