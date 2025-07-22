@@ -5,6 +5,7 @@ import streamlit as st
 import openai
 from dotenv import load_dotenv
 from statsmodels.tsa.arima.model import ARIMA
+import os
 
 load_dotenv()
 openai.api_type = "azure"
