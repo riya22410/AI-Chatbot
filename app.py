@@ -1,44 +1,81 @@
-
----
-
-## app.py
-```python
 import streamlit as st
+from dotenv import load_dotenv
 from chatbot import Chatbot
 
+load_dotenv()
 st.set_page_config(page_title="AI CSV Chatbot", layout="wide")
-st.title("📊 AI Chatbot with CSV Input and Visualization")
+st.title("📊 AI CSV Chatbot")
 
-# Sidebar: CSV upload
-st.sidebar.header("Upload Data")
-uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
+# Sidebar - CSV upload
+st.sidebar.header("Upload your CSV Data")
+uploaded = st.sidebar.file_uploader("Select a CSV file", type="csv")
 
-if uploaded_file:
-    # Initialize chatbot with DataFrame
-    bot = Chatbot(uploaded_file)
-    st.sidebar.success("CSV loaded: {} rows x {} columns".format(bot.df.shape[0], bot.df.shape[1]))
+if uploaded:
+    bot = Chatbot(uploaded)
+    st.sidebar.success(f"Loaded: {bot.df.shape[0]} rows, {bot.df.shape[1]} cols")
 
-    # Chat interface
-    st.header("Chat")
-    if 'chat_history' not in st.session_state:
-        st.session_state.chat_history = []
+    # Display the DataFrame
+    st.subheader("Data Preview")
+    st.dataframe(bot.df)
 
-    user_input = st.text_input("You:")
+    if 'history' not in st.session_state:
+        st.session_state.history = []
+
+    user_input = st.text_input("You:", key="input")
     if user_input:
-        with st.spinner("Thinking..."):
+        with st.spinner():
             response, follow_ups = bot.ask(user_input)
-        st.session_state.chat_history.append(("You", user_input))
-        st.session_state.chat_history.append(("Bot", response))
-        # Display chat
-        for speaker, text in st.session_state.chat_history:
-            if speaker == "You":
-                st.markdown(f"**You:** {text}")
-            else:
-                st.markdown(f"**Bot:** {text}")
-        # Show follow-ups
-        if follow_ups:
-            st.markdown("**Possible follow-up questions:**")
-            for q in follow_ups:
-                st.markdown(f"- {q}")
+        st.session_state.history.append(("user", user_input))
+        st.session_state.history.append(("bot", response))
+
+    for role, msg in st.session_state.history:
+        if role == 'user':
+            st.markdown(f"**You:** {msg}")
+        else:
+            st.markdown(f"**Bot:** {msg}")
+
+    if st.session_state.history and st.session_state.history[-1][0]=='bot' and follow_ups:
+        st.markdown("**Suggested follow-up questions:**")
+        for q in follow_ups:
+            st.write(f"- {q}")
 else:
-    st.info("Upload a CSV file to get started.")
+    st.info("Upload a CSV file to start chatting.")
+```python
+import streamlit as st
+from dotenv import load_dotenv
+from chatbot import Chatbot
+
+load_dotenv()
+st.set_page_config(page_title="AI CSV Chatbot", layout="wide")
+st.title("📊 AI CSV Chatbot")
+
+# Sidebar - CSV upload
+st.sidebar.header("Upload your CSV Data")
+uploaded = st.sidebar.file_uploader("Select a CSV file", type="csv")
+
+if uploaded:
+    bot = Chatbot(uploaded)
+    st.sidebar.success(f"Loaded: {bot.df.shape[0]} rows, {bot.df.shape[1]} cols")
+
+    if 'history' not in st.session_state:
+        st.session_state.history = []
+
+    user_input = st.text_input("You:", key="input")
+    if user_input:
+        with st.spinner():
+            response, follow_ups = bot.ask(user_input)
+        st.session_state.history.append(("user", user_input))
+        st.session_state.history.append(("bot", response))
+
+    for role, msg in st.session_state.history:
+        if role == 'user':
+            st.markdown(f"**You:** {msg}")
+        else:
+            st.markdown(f"**Bot:** {msg}")
+
+    if st.session_state.history and st.session_state.history[-1][0]=='bot' and follow_ups:
+        st.markdown("**Suggested follow-up questions:**")
+        for q in follow_ups:
+            st.write(f"- {q}")
+else:
+    st.info("Upload a CSV file to start chatting.")
