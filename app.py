@@ -1,6 +1,3 @@
-
-
-## app.py
 import streamlit as st
 from chatbot import Chatbot
 
