@@ -19,8 +19,8 @@ def plot_df(df: pd.DataFrame, prompt: str):
         "Respond only in JSON with keys: plot_type (e.g. line,histogram,bar), x (column or null), y (column or null), group (column or null)."
     )
     resp = openai.ChatCompletion.create(
-        deployment_id=self.azure_deployment
-        messages=[{"role":"user","content":schema_prompt}],
+        deployment_id=azure_deployment,  # ✅ Fixed for Azure
+        messages=[{"role": "user", "content": schema_prompt}],
         temperature=0,
     )
     spec = json.loads(resp.choices[0].message.content)
@@ -43,8 +43,8 @@ def forecast_series(df: pd.DataFrame, prompt: str):
         "Respond only in JSON with keys: date_col, value_col, periods (integer)."
     )
     resp = openai.ChatCompletion.create(
-        engine=azure_deployment,
-        messages=[{"role":"user","content":schema_prompt}],
+        deployment_id=azure_deployment,  # ✅ Fixed for Azure
+        messages=[{"role": "user", "content": schema_prompt}],
         temperature=0,
     )
     spec = json.loads(resp.choices[0].message.content)
@@ -52,7 +52,7 @@ def forecast_series(df: pd.DataFrame, prompt: str):
     df2[spec['date_col']] = pd.to_datetime(df2[spec['date_col']])
     df2.set_index(spec['date_col'], inplace=True)
     ts = df2[spec['value_col']]
-    model = ARIMA(ts, order=(1,1,1)).fit()
+    model = ARIMA(ts, order=(1, 1, 1)).fit()
     fc = model.forecast(steps=spec['periods'])
     fig, ax = plt.subplots()
     ts.plot(ax=ax)
