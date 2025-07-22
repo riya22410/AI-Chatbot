@@ -19,7 +19,7 @@ def plot_df(df: pd.DataFrame, prompt: str):
         "Respond only in JSON with keys: plot_type (e.g. line,histogram,bar), x (column or null), y (column or null), group (column or null)."
     )
     resp = openai.ChatCompletion.create(
-        engine=azure_deployment,
+        deployment_id=self.azure_deployment
         messages=[{"role":"user","content":schema_prompt}],
         temperature=0,
     )
