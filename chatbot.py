@@ -24,17 +24,22 @@ class Chatbot:
                 "Answer precisely and when they request visuals or forecasts, generate code accordingly."
             )
             self.messages.insert(0, {"role": "system", "content": sys_msg})
-        resp = openai.ChatCompletion.create(
-            deployment_id=self.azure_deployment,  # ✅ Azure-specific parameter
+
+        # ✅ Updated API call for SDK v1+
+        resp = openai.chat.completions.create(
+            model=self.azure_deployment,  # Azure deployment name
             messages=self.messages,
             temperature=0.2,
         )
         answer = resp.choices[0].message.content.strip()
         self.messages.append({"role": "assistant", "content": answer})
+
+        # Handle special cases (plots, forecasts)
         if "plot" in user_prompt.lower():
             plot_df(self.df, user_prompt)
         if "forecast" in user_prompt.lower():
             forecast_series(self.df, user_prompt)
+
         follow_ups = self._generate_followups()
         return answer, follow_ups
 
@@ -48,8 +53,9 @@ class Chatbot:
             *self.messages,
             {"role": "user", "content": prompt}
         ]
-        resp = openai.ChatCompletion.create(
-            deployment_id=self.azure_deployment,  # ✅ Fix here too
+        # ✅ Updated API call for SDK v1+
+        resp = openai.chat.completions.create(
+            model=self.azure_deployment,
             messages=messages,
             temperature=0.7,
         )
