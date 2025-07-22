@@ -1,8 +1,11 @@
+
+---
+
+## app.py
+```python
 import streamlit as st
-from dotenv import load_dotenv
 from chatbot import Chatbot
 
-load_dotenv()
 st.set_page_config(page_title="AI CSV Chatbot", layout="wide")
 st.title("📊 AI CSV Chatbot")
 
