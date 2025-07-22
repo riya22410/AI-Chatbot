@@ -18,8 +18,9 @@ def plot_df(df: pd.DataFrame, prompt: str):
         f"Given dataframe columns: {cols}, parse this instruction: '{prompt}'. "
         "Respond only in JSON with keys: plot_type (e.g. line,histogram,bar), x (column or null), y (column or null), group (column or null)."
     )
-    resp = openai.ChatCompletion.create(
-        deployment_id=azure_deployment,  # ✅ Fixed for Azure
+    # ✅ Updated API call for SDK v1+
+    resp = openai.chat.completions.create(
+        model=azure_deployment,
         messages=[{"role": "user", "content": schema_prompt}],
         temperature=0,
     )
@@ -42,8 +43,9 @@ def forecast_series(df: pd.DataFrame, prompt: str):
         f"Given dataframe columns: {cols}, parse this forecast request: '{prompt}'. "
         "Respond only in JSON with keys: date_col, value_col, periods (integer)."
     )
-    resp = openai.ChatCompletion.create(
-        deployment_id=azure_deployment,  # ✅ Fixed for Azure
+    # ✅ Updated API call for SDK v1+
+    resp = openai.chat.completions.create(
+        model=azure_deployment,
         messages=[{"role": "user", "content": schema_prompt}],
         temperature=0,
     )
