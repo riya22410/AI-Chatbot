@@ -1,16 +1,15 @@
-# AI Chatbot with CSV Input and Visualization
+# AI CSV Chatbot with Azure & OpenAI Integration
 
-This project is a Streamlit-based AI chatbot application that:
+This Streamlit app lets you interactively query a CSV dataset via an AI chat interface. It supports:
 
-- Accepts a CSV file upload and ingests it into a DataFrame
-- Answers user prompts by leveraging OpenAI's API, with context from the CSV
-- Generates possible follow-up questions
-- Produces visualizations (plots) on demand
-- Provides simple time-series forecasts when prompted
+- Persistent chat with dynamic follow-up generation
+- Azure OpenAI & OpenAI API backends
+- Flexible visualizations on demand
+- Configurable time-series forecasting
 
 ## Setup
 
-1. Clone this repo and `cd` into it:
+1. **Clone and setup**:
    ```bash
    git clone https://github.com/yourusername/ai_chatbot_streamlit.git
    cd ai_chatbot_streamlit
