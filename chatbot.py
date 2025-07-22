@@ -8,15 +8,16 @@ class Chatbot:
         self.df = pd.read_csv(csv_file)
         self.messages = []
         # Azure OpenAI config from Streamlit secrets
-        openai.api_type = st.secrets["azure_openai"]["API_TYPE"]
-        openai.api_base = st.secrets["azure_openai"]["API_BASE"]
-        openai.api_version = st.secrets["azure_openai"]["API_VERSION"]
-        openai.api_key = st.secrets["azure_openai"]["API_KEY"]
-        self.azure_deployment = st.secrets["azure_openai"]["DEPLOYMENT_NAME"]
+        azure_conf = st.secrets["azure_openai"]
+        openai.api_type = azure_conf["API_TYPE"]
+        openai.api_base = azure_conf["API_BASE"]
+        openai.api_version = azure_conf["API_VERSION"]
+        openai.api_key = azure_conf["API_KEY"]
+        self.azure_deployment = azure_conf["DEPLOYMENT_NAME"]
 
     def ask(self, user_prompt: str):
         self.messages.append({"role":"user","content":user_prompt})
-        if len(self.messages)==1:
+        if len(self.messages) == 1:
             cols = ", ".join(self.df.columns)
             sys_msg = (
                 f"You are a data assistant. The user has uploaded a CSV with columns: {cols}. "
